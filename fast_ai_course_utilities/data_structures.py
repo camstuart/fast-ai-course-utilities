@@ -8,19 +8,12 @@ import numpy as np
 from fast_ai_course_utilities.audio import audio_to_mel_spectrogram, load_audio_file
 
 
-def scale_minmax(x: np.ndarray, min_value: float = 0.0, max_value: float = 1.0) -> np.ndarray:
-    """Rescale an array to be between min_value and max_value"""
-    x_std = (x - x.min()) / (x.max() - x.min())
-    x_scaled: np.ndarray = x_std * (max_value - min_value) + min_value
-    return x_scaled
-
-
 class Classification(Enum):
+    composite = auto()
     firecom = auto()
     firefighter = auto()
-    composite = auto()
-    testtone = auto()
     noise = auto()
+    testtone = auto()
 
 
 @dataclass(slots=True)
