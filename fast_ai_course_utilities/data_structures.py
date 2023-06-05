@@ -57,9 +57,9 @@ class AudioTrainingRecords:
                     image_byte_count += record.mel_spectrogram.nbytes
 
             print(f'classification: "{classification.name}" has: {items} entries')
-        print(f'total files : {len(self.records)}" '
-              f'audio data  : {(audio_byte_count / 1048576):.2f} MB '
-              f'images data : {(image_byte_count / 1048576):.2f} MB')
+        print(f'total files   : {len(self.records)}\n'
+              f'audio data    : {(audio_byte_count / 1048576):.2f} MB\n'
+              f'images data   : {(image_byte_count / 1048576):.2f} MB')
 
 
 def get_image_files(data_set: AudioTrainingRecords) -> List[np.ndarray]:
