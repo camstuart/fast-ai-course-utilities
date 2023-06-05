@@ -2,7 +2,6 @@ import librosa
 import numpy as np
 
 from fast_ai_course_utilities.audio import audio_to_mel_spectrogram
-from fast_ai_course_utilities.data_structures import scale_minmax
 
 
 def compute_mel_spectrogram(audio_path: str, n_fft: int = 1024, hop_length: int = 256, n_mels: int = 40) -> np.ndarray:
