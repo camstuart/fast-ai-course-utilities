@@ -51,14 +51,15 @@ class AudioTrainingRecords:
         for classification in Classification:
             items = 0
             for record in self.records:
-                items += 1
-                audio_byte_count += record.audio_data.nbytes
-                image_byte_count += record.mel_spectrogram.nbytes
+                if record.classification == classification:
+                    items += 1
+                    audio_byte_count += record.audio_data.nbytes
+                    image_byte_count += record.mel_spectrogram.nbytes
 
-            print(f'classification: {classification.name}: has: {items} entries')
-        print(f'total files : {len(self.records)} '
-              f'audio data  : {audio_byte_count / 1024 / 1024} MB '
-              f'images data : {image_byte_count / 1024 / 1024} MB')
+            print(f'classification: "{classification.name}" has: {items} entries')
+        print(f'total files : {len(self.records)}" '
+              f'audio data  : {(audio_byte_count / 1048576):.2f} MB '
+              f'images data : {(image_byte_count / 1048576):.2f} MB')
 
 
 def get_image_files(data_set: AudioTrainingRecords) -> List[np.ndarray]:
