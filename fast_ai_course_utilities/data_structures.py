@@ -55,7 +55,7 @@ class AudioTrainingRecords:
                         signal = cut_if_necessary(NUM_SAMPLES, signal)
                         signal = right_pad_if_necessary(NUM_SAMPLES, signal)
                         mel_spec = torch_audio_to_mel_spectrogram(sample_rate=sr, signal=signal, n_fft=1024,
-                                                                  hop_length=256, n_mels=40)
+                                                                  hop_length=512, n_mels=64)
 
                         if parent_dir.name in Classification.__members__:
                             self.records.append(AudioTrainingRecord(classification=Classification[parent_dir.name],
