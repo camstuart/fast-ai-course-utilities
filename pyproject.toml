@@ -16,6 +16,7 @@ ipython = "^8.13.2"
 numpy = "^1.24.3"
 scikit-image = "^0.21.0"
 librosa = "0.8.0"
+torchaudio = "^2.0.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"

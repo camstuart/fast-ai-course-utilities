@@ -5,7 +5,9 @@ from typing import List
 
 import numpy as np
 
-from fast_ai_course_utilities.audio import audio_to_mel_spectrogram, load_audio_file
+from fast_ai_course_utilities.audio import librosa_audio_to_mel_spectrogram, load_audio_file, load_torch_audio_file, \
+    resample_if_necessary, mix_down_if_necessary, cut_if_necessary, right_pad_if_necessary,\
+    torch_audio_to_mel_spectrogram
 
 
 class Classification(Enum):
@@ -28,6 +30,9 @@ class AudioTrainingRecord:
 class AudioTrainingRecords:
     records: List[AudioTrainingRecord] = field(init=False, default_factory=list)
 
+    TARGET_SAMPLE_RATE = 24000
+    NUM_SAMPLES = TARGET_SAMPLE_RATE * 3
+
     def load_from_dir(self, base_path: str, ext: str = '.mp3') -> None:
         for parent_dir in os.scandir(base_path):
             if parent_dir.is_dir():
@@ -35,8 +40,17 @@ class AudioTrainingRecords:
                     if str(audio_file.name.lower()).endswith(ext.lower()):
                         input_audio_file = f'{base_path}/{parent_dir.name}/{audio_file.name}'
                         audio, sr = load_audio_file(input_audio_file)
-                        mel_spec = audio_to_mel_spectrogram(sample_rate=sr, audio=audio, n_fft=1024, hop_length=256,
-                                                            n_mels=40)
+                        # mel_spec = librosa_audio_to_mel_spectrogram(sample_rate=sr, audio=audio, n_fft=1024, hop_length=256,
+                        #                                     n_mels=40)
+
+                        signal, sr = load_torch_audio_file(input_audio_file)
+                        signal = resample_if_necessary(TARGET_SAMPLE_RATE, signal, sr)
+                        signal = mix_down_if_necessary(signal)
+                        signal = cut_if_necessary(signal)
+                        signal = right_pad_if_necessary(NUM_SAMPLES, signal)
+                        mel_spec = torch_audio_to_mel_spectrogram(sample_rate=sr, audio=signal, n_fft=1024, hop_length=256,
+                                                                  n_mels=40)
+
                         if parent_dir.name in Classification.__members__:
                             self.records.append(AudioTrainingRecord(classification=Classification[parent_dir.name],
                                                                     audio_data=audio,
