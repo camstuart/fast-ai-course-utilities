@@ -31,7 +31,7 @@ def librosa_audio_to_mel_spectrogram(sample_rate, audio, n_fft=1024, hop_length=
 
 
 def torch_audio_to_mel_spectrogram(sample_rate: int, signal: torch.Tensor, n_fft: int = 1024, hop_length: int = 256,
-                                   n_mels: int = 40) -> np.ndarray:
+                                   n_mels: int = 40) -> torch.Tensor:
     """Compute a mel spectrogram from a audio data with pytorch"""
     ms = torchaudio.transforms.MelSpectrogram(
         sample_rate=sample_rate,
