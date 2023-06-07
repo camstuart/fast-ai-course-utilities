@@ -39,8 +39,8 @@ def torch_audio_to_mel_spectrogram(sample_rate: int, signal: torch.Tensor, n_fft
         hop_length=hop_length,
         n_mels=n_mels
     )
-    mel_spectrogram: np.ndarray = ms(signal)
-    return mel_spectrogram
+    mel_spectrogram: torch.Tensor = ms(signal)
+    return mel_spectrogram.numpy()
 
 
 def load_torch_audio_file(path: str) -> Tuple[torch.Tensor, int]:
