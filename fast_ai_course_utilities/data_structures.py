@@ -4,6 +4,7 @@ from enum import Enum, auto
 from typing import List
 
 import numpy as np
+from pydub import AudioSegment
 
 from fast_ai_course_utilities.audio import librosa_audio_to_mel_spectrogram, load_audio_file, load_torch_audio_file, \
     resample_if_necessary, mix_down_if_necessary, cut_if_necessary, right_pad_if_necessary,\
@@ -39,11 +40,16 @@ class AudioTrainingRecords:
                 for audio_file in os.scandir(f'{base_path}/{parent_dir.name}'):
                     if str(audio_file.name.lower()).endswith(ext.lower()):
                         input_audio_file = f'{base_path}/{parent_dir.name}/{audio_file.name}'
-                        audio, sr = load_audio_file(input_audio_file)
+
+                        sound = AudioSegment.from_mp3(input_audio_file)
+                        wav_file = input_audio_file.replace(".mp3", ".wav")
+                        sound.export(wav_file, format="wav")
+
+                        # audio, sr = load_audio_file(input_audio_file)
                         # mel_spec = librosa_audio_to_mel_spectrogram(sample_rate=sr, audio=audio, n_fft=1024, hop_length=256,
                         #                                     n_mels=40)
 
-                        signal, sr = load_torch_audio_file(input_audio_file)
+                        signal, sr = load_torch_audio_file(wav_file)
                         signal = resample_if_necessary(TARGET_SAMPLE_RATE, signal, sr)
                         signal = mix_down_if_necessary(signal)
                         signal = cut_if_necessary(NUM_SAMPLES, signal)
@@ -53,8 +59,8 @@ class AudioTrainingRecords:
 
                         if parent_dir.name in Classification.__members__:
                             self.records.append(AudioTrainingRecord(classification=Classification[parent_dir.name],
-                                                                    audio_data=audio,
-                                                                    audio_file=input_audio_file,
+                                                                    audio_data=signal.numpy(),
+                                                                    audio_file=wav_file,
                                                                     mel_spectrogram=mel_spec))
                         else:
                             print(f'Unknown classification (parent directory): {parent_dir.name}')

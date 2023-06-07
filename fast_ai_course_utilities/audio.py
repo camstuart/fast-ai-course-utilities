@@ -44,9 +44,6 @@ def torch_audio_to_mel_spectrogram(sample_rate: int, signal: torch.Tensor, n_fft
 
 
 def load_torch_audio_file(path: str) -> Tuple[torch.Tensor, int]:
-    sound = AudioSegment.from_mp3(path)
-    wav_file = path.replace(".mp3", ".wav")
-    sound.export(wav_file, format="wav")
     audio, sr = torchaudio.load(path)
     return audio, sr
 
