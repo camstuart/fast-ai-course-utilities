@@ -14,8 +14,8 @@ packages = [
 python = ">=3.10,<4.0"
 ipython = "^8.13.2"
 numpy = "^1.24.3"
-librosa = "^0.10.0.post2"
 scikit-image = "^0.21.0"
+librosa = "0.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
