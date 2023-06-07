@@ -30,10 +30,10 @@ class AudioTrainingRecord:
 class AudioTrainingRecords:
     records: List[AudioTrainingRecord] = field(init=False, default_factory=list)
 
-    TARGET_SAMPLE_RATE = 24000
-    NUM_SAMPLES = TARGET_SAMPLE_RATE * 3
-
     def load_from_dir(self, base_path: str, ext: str = '.mp3') -> None:
+        TARGET_SAMPLE_RATE = 24000
+        NUM_SAMPLES = TARGET_SAMPLE_RATE * 3
+
         for parent_dir in os.scandir(base_path):
             if parent_dir.is_dir():
                 for audio_file in os.scandir(f'{base_path}/{parent_dir.name}'):
@@ -46,10 +46,10 @@ class AudioTrainingRecords:
                         signal, sr = load_torch_audio_file(input_audio_file)
                         signal = resample_if_necessary(TARGET_SAMPLE_RATE, signal, sr)
                         signal = mix_down_if_necessary(signal)
-                        signal = cut_if_necessary(signal)
+                        signal = cut_if_necessary(NUM_SAMPLES, signal)
                         signal = right_pad_if_necessary(NUM_SAMPLES, signal)
-                        mel_spec = torch_audio_to_mel_spectrogram(sample_rate=sr, audio=signal, n_fft=1024, hop_length=256,
-                                                                  n_mels=40)
+                        mel_spec = torch_audio_to_mel_spectrogram(sample_rate=sr, signal=signal, n_fft=1024,
+                                                                  hop_length=256, n_mels=40)
 
                         if parent_dir.name in Classification.__members__:
                             self.records.append(AudioTrainingRecord(classification=Classification[parent_dir.name],
