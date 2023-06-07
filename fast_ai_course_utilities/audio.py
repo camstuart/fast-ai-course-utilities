@@ -4,6 +4,7 @@ import librosa
 import numpy as np
 import torchaudio
 import torch
+from pydub import AudioSegment
 
 
 def scale_minmax(x: np.ndarray, min_value: float = 0.0, max_value: float = 1.0) -> np.ndarray:
@@ -43,7 +44,10 @@ def torch_audio_to_mel_spectrogram(sample_rate: int, signal: torch.Tensor, n_fft
 
 
 def load_torch_audio_file(path: str) -> Tuple[torch.Tensor, int]:
-    audio, sr = torchaudio.load(path, format="mp3")
+    sound = AudioSegment.from_mp3(path)
+    wav_file = path.replace(".mp3", ".wav")
+    sound.export(wav_file, format="wav")
+    audio, sr = torchaudio.load(path)
     return audio, sr
 
 
