@@ -6,15 +6,13 @@ from typing import List
 import numpy as np
 from pydub import AudioSegment
 
-from fast_ai_course_utilities.audio import librosa_audio_to_mel_spectrogram, load_audio_file, load_torch_audio_file, \
-    resample_if_necessary, mix_down_if_necessary, cut_if_necessary, right_pad_if_necessary,\
+from fast_ai_course_utilities.audio import load_torch_audio_file, \
+    resample_if_necessary, mix_down_if_necessary, cut_if_necessary, right_pad_if_necessary, \
     torch_audio_to_mel_spectrogram
 
 
 class Classification(Enum):
-    composite = auto()
-    firecom = auto()
-    firefighter = auto()
+    human = auto()
     noise = auto()
     testtone = auto()
 
@@ -44,10 +42,6 @@ class AudioTrainingRecords:
                         sound = AudioSegment.from_mp3(input_audio_file)
                         wav_file = input_audio_file.replace(".mp3", ".wav")
                         sound.export(wav_file, format="wav")
-
-                        # audio, sr = load_audio_file(input_audio_file)
-                        # mel_spec = librosa_audio_to_mel_spectrogram(sample_rate=sr, audio=audio, n_fft=1024, hop_length=256,
-                        #                                     n_mels=40)
 
                         signal, sr = load_torch_audio_file(wav_file)
                         signal = resample_if_necessary(TARGET_SAMPLE_RATE, signal, sr)
