@@ -4,11 +4,8 @@ from enum import Enum, auto
 from typing import List
 
 import numpy as np
-from pydub import AudioSegment
 
-from fast_ai_course_utilities.audio import load_torch_audio_file, \
-    resample_if_necessary, mix_down_if_necessary, cut_if_necessary, right_pad_if_necessary, \
-    torch_audio_to_mel_spectrogram, audio_to_mfcc_image
+from fast_ai_course_utilities.audio import audio_to_mfcc_image, file_to_audio
 
 
 class Classification(Enum):
@@ -30,46 +27,28 @@ class AudioTrainingRecords:
     records: List[AudioTrainingRecord] = field(init=False, default_factory=list)
 
     def load_from_dir(self, base_path: str, ext: str = '.mp3') -> None:
-        TARGET_SAMPLE_RATE = 24000
-        NUM_SAMPLES = TARGET_SAMPLE_RATE * 1
-
         for parent_dir in os.scandir(base_path):
             if parent_dir.is_dir():
                 for audio_file in os.scandir(f'{base_path}/{parent_dir.name}'):
                     if str(audio_file.name.lower()).endswith(ext.lower()):
                         input_audio_file = f'{base_path}/{parent_dir.name}/{audio_file.name}'
-
-                        mel_spec = audio_to_mfcc_image(input_audio_file, length=4)
-
-                        # sound = AudioSegment.from_mp3(input_audio_file)
-                        # wav_file = input_audio_file.replace(".mp3", ".wav")
-                        # sound.export(wav_file, format="wav")
-                        #
-                        # signal, sr = load_torch_audio_file(wav_file)
-                        # signal = resample_if_necessary(TARGET_SAMPLE_RATE, signal, sr)
-                        # signal = mix_down_if_necessary(signal)
-                        # signal = cut_if_necessary(NUM_SAMPLES, signal)
-                        # signal = right_pad_if_necessary(NUM_SAMPLES, signal)
-                        # mel_spec = torch_audio_to_mel_spectrogram(sample_rate=sr, signal=signal, n_fft=1024,
-                        #                                           hop_length=512, n_mels=64)
+                        data = file_to_audio(input_audio_file)
+                        mel_spec = audio_to_mfcc_image(audio=data[0], sample_rate=data[1], length=4)
 
                         if parent_dir.name in Classification.__members__:
                             self.records.append(AudioTrainingRecord(classification=Classification[parent_dir.name],
-                                                                    # audio_data=signal.numpy(),
                                                                     audio_file=input_audio_file,
                                                                     mel_spectrogram=mel_spec))
                         else:
                             print(f'Unknown classification (parent directory): {parent_dir.name}')
 
     def summary(self) -> None:
-        audio_byte_count = 0
         image_byte_count = 0
         for classification in Classification:
             items = 0
             for record in self.records:
                 if record.classification == classification:
                     items += 1
-                    # audio_byte_count += record.audio_data.nbytes
                     image_byte_count += record.mel_spectrogram.nbytes
 
             print(f'classification: "{classification.name}" has: {items} entries')

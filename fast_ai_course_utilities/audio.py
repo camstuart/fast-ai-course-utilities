@@ -30,23 +30,21 @@ def librosa_audio_to_mel_spectrogram(sample_rate, audio, n_fft=1024, hop_length=
     return img
 
 
-def audio_to_mfcc_image(audio_path, length: int = 1) -> np.ndarray:
-    # Load the audio file
-    audio, sr = librosa.load(audio_path, duration=length)  # Set the duration to 2 seconds
+def file_to_audio(audio_path: str) -> Tuple[np.ndarray, float]:
+    audio, sr = librosa.load(audio_path)
+    return audio, sr
 
-    # Pad or trim the audio to a consistent length of 2 seconds
-    target_length: int = length * int(sr)  # Compute the target length in samples
+
+def audio_to_mfcc_image(audio: np.ndarray, sample_rate: float, length: int) -> np.ndarray:
+    target_length: int = length * int(sample_rate)  # Compute the target length in samples
     audio_length = len(audio)
 
     if audio_length < target_length:
-        # Pad the audio with zeros at the end
         audio = np.pad(audio, (0, target_length - audio_length), mode='constant')
     elif audio_length > target_length:
-        # Trim the audio to the target length
         audio = audio[:target_length]
 
-    # Compute the MFCCs
-    return librosa.feature.mfcc(y=audio, sr=sr)
+    return librosa.feature.mfcc(y=audio, sr=sample_rate)
 
 
 def torch_audio_to_mel_spectrogram(sample_rate: int, signal: torch.Tensor, n_fft: int = 1024, hop_length: int = 512,
