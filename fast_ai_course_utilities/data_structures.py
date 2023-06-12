@@ -31,7 +31,7 @@ class AudioTrainingRecords:
 
     def load_from_dir(self, base_path: str, ext: str = '.mp3') -> None:
         TARGET_SAMPLE_RATE = 24000
-        NUM_SAMPLES = TARGET_SAMPLE_RATE * 3
+        NUM_SAMPLES = TARGET_SAMPLE_RATE * 1.5
 
         for parent_dir in os.scandir(base_path):
             if parent_dir.is_dir():
