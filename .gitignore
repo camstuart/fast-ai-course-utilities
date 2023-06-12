@@ -1,3 +1,7 @@
+__MACOSX
+.DS_Store
+cfa-scanner-snippets
+
 docs/source
 
 # From https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
